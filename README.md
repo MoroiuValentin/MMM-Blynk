@@ -13,8 +13,10 @@ In my case i have a NodeMCU v 1.0 and a DHT22 sensor for temperature and humidit
 You need to change the source code to suit your needs. 
 In processData function add json path to  value that you want to display. 
 In my case is:
+```js
  		this.tempRequest = data.widgets[3].value;
 		this.humiRequest = data.widgets[2].value;
+```
 Then in getDom function add this to by displayed.
 The advantage of using this solution is that you can grab this information over the internet
 from a remote location.
@@ -40,10 +42,4 @@ var config = {
 
 ## Configuration options
 
-| Option           | Description
-|----------------- |-----------
-| `option1`        | *Required* DESCRIPTION HERE
-| `option2`        | *Optional* DESCRIPTION HERE TOO <br><br>**Type:** `int`(milliseconds) <br>Default 60000 milliseconds (1 minute)
-# MMM-Blynk
-# MMM-Blynk
-# MMM-Blynk
+
