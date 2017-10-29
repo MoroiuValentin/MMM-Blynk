@@ -11,8 +11,9 @@ Access http://blynk-cloud.com/YOUR_BLYNK_PROJECT_TOKEN/project
 and identify information that what you want to show in your MagicMirror.
 In my case i have a NodeMCU v 1.0 and a DHT22 sensor for temperature and humidity.
 ```
-We've made some changes to automate the process. 
-Automatically detects DIGIT4_DISPLAY and LABELED_VALUE_DISPLAY widgets and then extracts 'label' and 'value' and displays them
+I have made some changes to automate the process. 
+Automatically detects DIGIT4_DISPLAY and LABELED_VALUE_DISPLAY 
+widgets and then extracts 'label' and 'value' and displays them
 ```
 You need to change the source code to suit your needs. 
 In processData function add json path to  value that you want to display. 
