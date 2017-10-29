@@ -17,7 +17,36 @@ In my case is:
  		this.tempRequest = data.widgets[3].value;
 		this.humiRequest = data.widgets[2].value;
 ```
-Then in getDom function add this to by displayed.
+Then in getDom function add check if device is connected and display temperature and humidity
+
+```js
+
+	if (this.statusRequest == "ONLINE") 
+		{
+		 	var temp = parseFloat(this.tempRequest).toFixed(1);
+			var umid = parseFloat(this.humiRequest).toFixed(1);
+
+			var wrappertempRequest = document.createElement("div");
+			wrappertempRequest.innerHTML ="Temperature : " + temp + "&deg;C";
+
+
+			var wrapperhumiRequest = document.createElement("div");
+			wrapperhumiRequest.innerHTML ="Humidity : " + umid + " %";
+			
+			
+			wrapper.appendChild(wrappertempRequest);
+			wrapper.appendChild(wrapperhumiRequest);
+		}
+	// If device is offline
+	else 
+		{
+			var wrapperstatusRequest = document.createElement("div");
+			wrapperstatusRequest.innerHTML = "OFFLINE";
+
+			wrapper.appendChild(wrapperstatusRequest);
+		}
+
+```
 The advantage of using this solution is that you can grab this information over the internet
 from a remote location.
 	
