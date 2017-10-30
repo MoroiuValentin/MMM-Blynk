@@ -13,7 +13,7 @@ Module.register("MMM-Blynk", {
 		retryDelay: 5000,
 		apiBase : "http://blynk-cloud.com/",
 		authToken : "",
-		displayType: "text" // box or text
+		displayType: "box" // box or text
 	},
 	getScripts: function() {
 		return ["moment.js", "moment-timezone.js"];
