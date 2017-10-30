@@ -12,7 +12,8 @@ Module.register("MMM-Blynk", {
 		updateInterval: 60000,
 		retryDelay: 5000,
 		apiBase : "http://blynk-cloud.com/",
-		authToken : ""
+		authToken : "",
+		displayType: "text" // box or text
 	},
 	getScripts: function() {
 		return ["moment.js", "moment-timezone.js"];
@@ -102,7 +103,7 @@ Module.register("MMM-Blynk", {
 		var wrapper = document.createElement("div");
 
 		if (this.config.authToken ===""){
-			wrapper.innerHTML = "Please insert the corect Blynk token in the config for module: " + this.name + "."
+			wrapper.innerHTML = "Please insert the corect Blynk tokenbox in the config for module: " + this.name + "."
 			wrapper.className = "dimmed light small";
 			return wrapper;
 		}
@@ -117,47 +118,51 @@ Module.register("MMM-Blynk", {
 		// If device (IOT) is ONLINE
 		if (this.statusRequest == "ONLINE") {
 
+			//define RegExp for check widget label
 			var temppatt = new RegExp(/temp/i);
 			var humidpatt = new RegExp(/umidi/i);
-
-			var wrapperxRequest = document.createElement("div");
-			var meterxRequest = document.createElement("meter");
 
 
 			for(var j = 0; j < this.x.length; j++)
 			{
-				var sp = this.x[j].split(":");
+				var splitData = this.x[j].split(":");
 
-					if(temppatt.test(sp[0]))
+					if(temppatt.test(splitData[0]))
 					{
-						wrapperxRequest.innerHTML += this.x[j] + "&deg;C <br>";
-
+						if(this.config.displayType === "box")
+						{
+						var wrapperxRequest = document.createElement("div");
+						wrapperxRequest.className = "rcorners";
+						wrapperxRequest.innerHTML = splitData[1] + "°C";
+						wrapper.appendChild(wrapperxRequest);
+						} else {
+						var wrapperxRequest = document.createElement("div");
+						wrapperxRequest.innerHTML = this.x[j] + " °C";
+						wrapper.appendChild(wrapperxRequest);
+						}
 					}
-					if(humidpatt.test(sp[0]))
+					if(humidpatt.test(splitData[0]))
 					{
-						wrapperxRequest.innerHTML += this.x[j] + " % <br>";
-						console.log(this.data.path + "icon/humidity.svg");
+						if(this.config.displayType === "box")
+						{
+						var wrapperxRequest = document.createElement("div");
+						wrapperxRequest.className = "rcorners";
+						wrapperxRequest.innerHTML = splitData[1] + "%";
+						wrapper.appendChild(wrapperxRequest);
+					} else {
+						var wrapperxRequest = document.createElement("div");
+						wrapperxRequest.innerHTML = this.x[j] + " %";
+						wrapper.appendChild(wrapperxRequest);
+					}
 					}
 			}
-/*
-		 	var temp = parseFloat(this.tempRequest).toFixed(1);
-			var umid = parseFloat(this.humiRequest).toFixed(1);
 
-			var wrappertempRequest = document.createElement("div");
-			wrappertempRequest.innerHTML ="Temperature : " + temp + "&deg;C";
+		//	wrapper.appendChild(wrapperxRequest);
 
-
-			var wrapperhumiRequest = document.createElement("div");
-			wrapperhumiRequest.innerHTML ="Humidity : " + umid + " %";
-
-
-			wrapper.appendChild(wrappertempRequest);
-			wrapper.appendChild(wrapperhumiRequest);
-*/
-			wrapper.appendChild(wrapperxRequest);
 		}
 		// If device is offline
 		else {
+
 			var dt = moment(this.offlineData);
 
 			var wrapperstatusRequest = document.createElement("div");
@@ -179,13 +184,14 @@ Module.register("MMM-Blynk", {
 
 
 	processData: function(data) {
+		//read device status
 		this.statusRequest = data.devices[0].status;
+		//read device disconnected time
 		this.offlineData = data.devices[0].disconnectTime;
-		var i;
 		this.x = [];
 
 		console.log(this.x);
-		for (i = 0; i < data.widgets.length;  i++)
+		for (var i = 0; i < data.widgets.length;  i++)
 		{
 			if(data.widgets[i].type == "DIGIT4_DISPLAY" || data.widgets[i].type == "LABELED_VALUE_DISPLAY")
 			{
@@ -198,8 +204,6 @@ Module.register("MMM-Blynk", {
 			identify information that what you want to show in your magicmirror
 			In my case i have a NodeMCU v 1.0 and a DHT22 sensor for temperature and humidity.
 			The advantage of using this solution is that you can grab this information over the internet from remote location
-
-
 
 		this.dataRequest = data;
 		this.tempRequest = data.widgets[2].value;
