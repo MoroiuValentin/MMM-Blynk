@@ -3,7 +3,7 @@
 /* Magic Mirror
  * Module: MMM-Blynk
  *
- * By 
+ * By
  * MIT Licensed.
  */
 
@@ -14,22 +14,24 @@ Module.register("MMM-Blynk", {
 		apiBase : "http://blynk-cloud.com/",
 		authToken : ""
 	},
-
+	getScripts: function() {
+		return ["moment.js", "moment-timezone.js"];
+	},
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
 	start: function() {
 		var self = this;
 		var dataRequest = null;
 		var dataNotification = null;
-        var tempRequest = null;
-        var humiRequest = null;
+    var tempRequest = null;
+    var humiRequest = null;
 		var statusRequest = null;
 		var x = null;
 
 
 		//Flag for check if module is loaded
 		this.loaded = false;
-		this.token = true;
+
 
 		// Schedule update timer.
 		this.getData();
@@ -88,13 +90,14 @@ Module.register("MMM-Blynk", {
 			nextLoad = delay;
 		}
 		nextLoad = nextLoad ;
+		var self = this;
 		setTimeout(function() {
-			this.getData();
+			self.getData();
 		}, nextLoad);
 	},
 
 	getDom: function() {
-		
+		var self = this;
 		// create element wrapper for show into the module
 		var wrapper = document.createElement("div");
 
@@ -103,21 +106,38 @@ Module.register("MMM-Blynk", {
 			wrapper.className = "dimmed light small";
 			return wrapper;
 		}
-		
+
 		if (!this.loaded) {
 			wrapper.innerHTML = this.translate("LOADING");
 			wrapper.className = "dimmed light small";
 			return wrapper;
 		}
-		
+
 
 		// If device (IOT) is ONLINE
 		if (this.statusRequest == "ONLINE") {
 
+			var temppatt = new RegExp(/temp/i);
+			var humidpatt = new RegExp(/umidi/i);
+
 			var wrapperxRequest = document.createElement("div");
+			var meterxRequest = document.createElement("meter");
+
+
 			for(var j = 0; j < this.x.length; j++)
 			{
-				wrapperxRequest.innerHTML += this.x[j] + "<br>";
+				var sp = this.x[j].split(":");
+
+					if(temppatt.test(sp[0]))
+					{
+						wrapperxRequest.innerHTML += this.x[j] + "&deg;C <br>";
+
+					}
+					if(humidpatt.test(sp[0]))
+					{
+						wrapperxRequest.innerHTML += this.x[j] + " % <br>";
+						console.log(this.data.path + "icon/humidity.svg");
+					}
 			}
 /*
 		 	var temp = parseFloat(this.tempRequest).toFixed(1);
@@ -129,8 +149,8 @@ Module.register("MMM-Blynk", {
 
 			var wrapperhumiRequest = document.createElement("div");
 			wrapperhumiRequest.innerHTML ="Humidity : " + umid + " %";
-			
-			
+
+
 			wrapper.appendChild(wrappertempRequest);
 			wrapper.appendChild(wrapperhumiRequest);
 */
@@ -138,14 +158,16 @@ Module.register("MMM-Blynk", {
 		}
 		// If device is offline
 		else {
+			var dt = moment(this.offlineData);
+
 			var wrapperstatusRequest = document.createElement("div");
-			wrapperstatusRequest.innerHTML = "OFFLINE";
+			wrapperstatusRequest.innerHTML = "OFFLINE : <br>" + dt.format("hh:mm") +"  "+ dt.format("L");
 
 			wrapper.appendChild(wrapperstatusRequest);
 		}
 
 		// Data from helper
-		
+
 		return wrapper;
 	},
 
@@ -154,21 +176,25 @@ Module.register("MMM-Blynk", {
 			"MMM-Blynk.css",
 		];
 	},
-	
+
 
 	processData: function(data) {
 		this.statusRequest = data.devices[0].status;
+		this.offlineData = data.devices[0].disconnectTime;
 		var i;
 		this.x = [];
-		
+
 		console.log(this.x);
-		for (i = 0; i < data.widgets.length;  i++) {
-			if(data.widgets[i].type == "DIGIT4_DISPLAY" ||data.widgets[i].type == "LABELED_VALUE_DISPLAY")
-			this.x.push((data.widgets[i].label + " : " + parseFloat(data.widgets[i].value).toFixed(1)).toString());
-			console.log(this.x);
+		for (i = 0; i < data.widgets.length;  i++)
+		{
+			if(data.widgets[i].type == "DIGIT4_DISPLAY" || data.widgets[i].type == "LABELED_VALUE_DISPLAY")
+			{
+				this.x.push((data.widgets[i].label + " : " + parseFloat(data.widgets[i].value).toFixed(1)).toString());
+				console.log(this.x);
+			}
 		}
-		
-		/*Access from browser http://blynk-cloud.com/YOUR_BLYNK_PROJECT_TOKEN/project and 
+
+		/*Access from browser http://blynk-cloud.com/YOUR_BLYNK_PROJECT_TOKEN/project and
 			identify information that what you want to show in your magicmirror
 			In my case i have a NodeMCU v 1.0 and a DHT22 sensor for temperature and humidity.
 			The advantage of using this solution is that you can grab this information over the internet from remote location
@@ -179,7 +205,7 @@ Module.register("MMM-Blynk", {
 		this.tempRequest = data.widgets[2].value;
 		this.humiRequest = data.widgets[1].value;
 		this.statusRequest = data.devices[0].status;
-		
+
 */
 
 		if (this.loaded === false) { this.updateDom(this.config.animationSpeed) ; }
@@ -197,5 +223,5 @@ Module.register("MMM-Blynk", {
 			this.dataNotification = payload;
 			this.updateDom();
 		}
-	}, 
+	},
 });
