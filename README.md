@@ -29,6 +29,7 @@ var config = {
 			config: {
 				authToken: "",
 				displayType: "" // options available are 'box' and 'text'.  
+        widgetsColor: "" //widgets text color
 			}
 		}
     ]
@@ -58,7 +59,7 @@ The following properties can be configured:
 		<tr>
 			<td><code>displayType</code></td>
 			<td>Control how information will be display<br>
-				<br><b>Possible values:</b> <code>box, text</code>
+				<br><b>Possible values:</b> <code>simple, box, lcd</code>
 				<br><b>Default value:</b> <code>"box"</code>
 			</td>
 		</tr>

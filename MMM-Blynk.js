@@ -13,7 +13,7 @@ Module.register("MMM-Blynk", {
 		retryDelay: 5000,
 		apiBase : "http://blynk-cloud.com/",
 		authToken : "",
-		displayType: "box" // box or text
+		displayType: "box", // box or text
 	},
 	getScripts: function() {
 		return ["moment.js", "moment-timezone.js"];
@@ -24,8 +24,6 @@ Module.register("MMM-Blynk", {
 		var self = this;
 		var dataRequest = null;
 		var dataNotification = null;
-    var tempRequest = null;
-    var humiRequest = null;
 		var statusRequest = null;
 		var x = null;
 
@@ -127,37 +125,23 @@ Module.register("MMM-Blynk", {
 			{
 				var splitData = this.x[j].split(":");
 
-					if(temppatt.test(splitData[0]))
-					{
-						if(this.config.displayType === "box")
+						if(temppatt.test(splitData[0]))
 						{
-						var wrapperxRequest = document.createElement("div");
-						wrapperxRequest.className = "rcorners";
-						wrapperxRequest.innerHTML = splitData[1] + "°C";
-						wrapper.appendChild(wrapperxRequest);
-						} else {
-						var wrapperxRequest = document.createElement("div");
-						wrapperxRequest.innerHTML = this.x[j] + " °C";
-						wrapper.appendChild(wrapperxRequest);
+							var wrapperxRequest = document.createElement("div");
+							wrapperxRequest.className = this.config.displayType;
+							wrapperxRequest.innerHTML = splitData[1] + "°C";
+							wrapper.appendChild(wrapperxRequest);
 						}
-					}
-					if(humidpatt.test(splitData[0]))
-					{
-						if(this.config.displayType === "box")
+						if(humidpatt.test(splitData[0]))
 						{
-						var wrapperxRequest = document.createElement("div");
-						wrapperxRequest.className = "rcorners";
-						wrapperxRequest.innerHTML = splitData[1] + "%";
-						wrapper.appendChild(wrapperxRequest);
-					} else {
-						var wrapperxRequest = document.createElement("div");
-						wrapperxRequest.innerHTML = this.x[j] + " %";
-						wrapper.appendChild(wrapperxRequest);
-					}
-					}
+							var wrapperxRequest = document.createElement("div");
+							wrapperxRequest.className = this.config.displayType;
+							wrapperxRequest.innerHTML = splitData[1] + " %";
+							wrapper.appendChild(wrapperxRequest);
+						}
+
 			}
 
-		//	wrapper.appendChild(wrapperxRequest);
 
 		}
 		// If device is offline
