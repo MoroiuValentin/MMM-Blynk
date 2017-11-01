@@ -28,8 +28,8 @@ var config = {
 			position: "bottom_right",
 			config: {
 				authToken: "",
-				displayType: "" // options available are 'box' and 'text'.  
-        widgetsColor: "" //widgets text color
+				displayType: "" // options available are 'box' and 'simple'.  
+
 			}
 		}
     ]
