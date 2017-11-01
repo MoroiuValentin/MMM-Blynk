@@ -16,9 +16,7 @@ Module.register("MMM-Blynk", {
 		displayType: "box", // box or text
 	},
 	getScripts: function() {
-		return ["moment.js",
-						"moment-timezone.js",
-						this.file('node_modules/string-format/lib/string-format.js')];
+		return ["moment.js","moment-timezone.js"];
 		},
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
