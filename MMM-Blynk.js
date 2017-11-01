@@ -16,8 +16,10 @@ Module.register("MMM-Blynk", {
 		displayType: "box", // box or text
 	},
 	getScripts: function() {
-		return ["moment.js", "moment-timezone.js"];
-	},
+		return ["moment.js",
+						"moment-timezone.js",
+						this.file('node_modules/string-format/lib/string-format.js')];
+		},
 	requiresVersion: "2.1.0", // Required version of MagicMirror
 
 	start: function() {
@@ -95,23 +97,46 @@ Module.register("MMM-Blynk", {
 		}, nextLoad);
 	},
 
+	// define html element for later use.
+	html: {
+		div: '<div class="simple"> {} </div>'
+	},
+
+	// tray to automate the proccess but i have some issue ... :)
+	replaceTemplate: function(str, arg) {
+
+	    var splitArgs = arg.split(" ");
+	    var countOccurrence = (str.match(/([{}])\1|[{](.*?)(?:!(.+?))?[}]/g)).length;
+	  //  if(splitArgs.length != countOcur) later inpleement of check
+	    for(var i = 0; i < splitArgs.length; i++)
+	    {
+	      var res = str.replace(/([{}])\1|[{](.*?)(?:!(.+?))?[}]/i, splitArgs[i]);
+	      var str = res;
+	    }
+			console.log(str);
+	  return str;
+	},
+
 	getDom: function() {
 		var self = this;
+
 		// create element wrapper for show into the module
 		var wrapper = document.createElement("div");
 
 		if (this.config.authToken ===""){
-			wrapper.innerHTML = "Please insert the corect Blynk tokenbox in the config for module: " + this.name + "."
+			wrapper.innerHTML = "Please insert the corect Blynk token in the config for module: " + this.name + "."
 			wrapper.className = "dimmed light small";
 			return wrapper;
 		}
 
 		if (!this.loaded) {
-			wrapper.innerHTML = this.translate("LOADING");
+		//	wrapper.innerHTML = "Loading";
+			var str = this.html.div;
+			var xy = "Loading";
+			wrapper.innerHTML = this.replaceTemplate(str, xy);
 			wrapper.className = "dimmed light small";
 			return wrapper;
 		}
-
 
 		// If device (IOT) is ONLINE
 		if (this.statusRequest == "ONLINE") {
@@ -119,7 +144,7 @@ Module.register("MMM-Blynk", {
 			//define RegExp for check widget label
 			var temppatt = new RegExp(/temp/i);
 			var humidpatt = new RegExp(/umidi/i);
-
+			var str = this.html.div;
 
 			for(var j = 0; j < this.x.length; j++)
 			{
@@ -127,11 +152,14 @@ Module.register("MMM-Blynk", {
 
 						if(temppatt.test(splitData[0]))
 						{
+							var arg = splitData[1];
+							//wrapper.innerHTML = this.replaceTemplate(str, arg);
 							var wrapperxRequest = document.createElement("div");
 							wrapperxRequest.className = this.config.displayType;
 							wrapperxRequest.innerHTML = splitData[1] + "°C";
 							wrapper.appendChild(wrapperxRequest);
 						}
+
 						if(humidpatt.test(splitData[0]))
 						{
 							var wrapperxRequest = document.createElement("div");
@@ -156,7 +184,7 @@ Module.register("MMM-Blynk", {
 		}
 
 		// Data from helper
-
+		//return $('<div>'+xy+'</div>')[0];
 		return wrapper;
 	},
 
