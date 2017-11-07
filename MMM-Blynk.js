@@ -115,6 +115,15 @@ Module.register("MMM-Blynk", {
 	  return str;
 	},
 
+// function that help to create html elements;
+	createDom: function(data,type) {
+		var wrapperxRequest = document.createElement("div");
+		wrapperxRequest.className = this.config.displayType;
+		wrapperxRequest.innerHTML =data +" "+ type;
+		wrapperxRequest.id = data;
+		return wrapperxRequest;
+	},
+
 	getDom: function() {
 		var self = this;
 
@@ -150,20 +159,13 @@ Module.register("MMM-Blynk", {
 
 						if(temppatt.test(splitData[0]))
 						{
-							var arg = splitData[1];
-							//wrapper.innerHTML = this.replaceTemplate(str, arg);
-							var wrapperxRequest = document.createElement("div");
-							wrapperxRequest.className = this.config.displayType;
-							wrapperxRequest.innerHTML = splitData[1] + "°C";
-							wrapper.appendChild(wrapperxRequest);
+							wrapper.appendChild(this.createDom(splitData[1],"&deg;C"));
 						}
 
 						if(humidpatt.test(splitData[0]))
 						{
-							var wrapperxRequest = document.createElement("div");
-							wrapperxRequest.className = this.config.displayType;
-							wrapperxRequest.innerHTML = splitData[1] + " %";
-							wrapper.appendChild(wrapperxRequest);
+							wrapper.appendChild(this.createDom(splitData[1]," %"));
+
 						}
 
 			}
